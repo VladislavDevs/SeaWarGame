@@ -1,4 +1,4 @@
-package battleship.model;
+package SeaWarProject.map;
 
 public class Cell {
 

@@ -1,4 +1,4 @@
-package battleship.battle;
+package SeaWarProject.battle;
 
 public enum ShotResult {
     MISS,

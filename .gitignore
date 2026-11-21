@@ -144,7 +144,6 @@ StyleCopReport.xml
 *.tmp
 *.tmp_proj
 *_wpftmp.csproj
-*.log
 *.tlog
 *.vspscc
 *.vssscc
@@ -350,10 +349,6 @@ node_modules/
 *.dsw
 *.dsp
 
-# Visual Studio 6 technical files
-*.ncb
-*.aps
-
 # Visual Studio LightSwitch build output
 **/*.HTMLClient/GeneratedArtifacts
 **/*.DesktopClient/GeneratedArtifacts
@@ -452,3 +447,6 @@ FodyWeavers.xsd
 
 # Official VS Code C# Dev Kit Extension exclusion
 #*.lscache
+
+.idea/
+*.iml

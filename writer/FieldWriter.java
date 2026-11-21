@@ -1,90 +1,81 @@
-package battleship.writer;
+package SeaWarProject.writer;
 
-import battleship.model.Battlefield;
-import battleship.model.Cell;
-import battleship.util.GameConstants;
-import battleship.model.CellState;;
+import SeaWarProject.map.Battlefield;
+import SeaWarProject.map.Cell;
+import SeaWarProject.map.CellState;
+import SeaWarProject.map.Coordinate;
+import SeaWarProject.other.GameConstants;
 
 public class FieldWriter {
 
-    public void printField(Battlefield field) {
+    // lastComputerShot нужен для отрисовки кружочка
+    public void printBothFields(Battlefield playerField, Battlefield enemyField, Coordinate lastComputerShot) {
         printHeader();
-        printTopBorder();
+        printBorder();
         for (int r = 0; r < Battlefield.SIZE; r++) {
-            printRow(field, r);
-            if (r < Battlefield.SIZE - 1) printMiddleBorder();
+            printRow(playerField, enemyField, r, lastComputerShot);
+            if (r < Battlefield.SIZE - 1) printBorder();
         }
-        printBottomBorder();
+        printBorder();
+        System.out.println("      ВАШЕ ПОЛЕ (корабли видны)                        ПОЛЕ ПРОТИВНИКА (скрыто)");
     }
 
     private void printHeader() {
         System.out.print("    ");
-        for (int i = 0; i < 10; i++) {
-            System.out.print(GameConstants.COLUMN_LABELS[i]);
-            if (i < 9) System.out.print("   ");
+        for (int i = 0; i < 10; i++) System.out.print(" " + GameConstants.COLUMN_LABELS[i] + "  ");
+        System.out.print("     ");
+        System.out.print("    ");
+        for (int i = 0; i < 10; i++) System.out.print(" " + GameConstants.COLUMN_LABELS[i] + "  ");
+        System.out.println();
+    }
+
+    private void printBorder() {
+        System.out.print("   +");
+        for (int i = 0; i < 10; i++) { System.out.print("---"); if (i < 9) System.out.print("+"); }
+        System.out.print("+     ");
+        System.out.print("   +");
+        for (int i = 0; i < 10; i++) { System.out.print("---"); if (i < 9) System.out.print("+"); }
+        System.out.println("+");
+    }
+
+    private void printRow(Battlefield pField, Battlefield eField, int r, Coordinate lastShot) {
+        // Левое поле (Игрока)
+        System.out.printf("%2d |", r + 1);
+        for (int c = 0; c < Battlefield.SIZE; c++) {
+            String sym = playerSymbol(pField.getCell(r, c));
+
+            // Если это координаты последнего выстрела компьютера — рисуем кружочек
+            if (lastShot != null && lastShot.getRow() == r && lastShot.getCol() == c) {
+                if (pField.getCell(r, c).getState() == CellState.MISS) sym = "o"; // маленький кружок (мимо)
+                if (pField.getCell(r, c).getState() == CellState.HIT) sym = "O";  // большой кружок (попал)
+            }
+            System.out.print(" " + sym + " |");
+        }
+
+        System.out.print("     ");
+
+        // Правое поле (Противника)
+        System.out.printf("%2d |", r + 1);
+        for (int c = 0; c < Battlefield.SIZE; c++) {
+            System.out.print(" " + enemySymbol(eField.getCell(r, c)) + " |");
         }
         System.out.println();
     }
 
-    private void printTopBorder() {
-        System.out.print("  ┌");
-        for (int i = 0; i < 10; i++) {
-            System.out.print("───");
-            if (i < 9) System.out.print("┬");
-        }
-        System.out.println("┐");
+    private String playerSymbol(Cell cell) {
+        return switch (cell.getState()) {
+            case SHIP -> "■";
+            case MISS -> "·";
+            case HIT -> "X";
+            default -> " ";
+        };
     }
 
-    private void printMiddleBorder() {
-        System.out.print("  ├");
-        for (int i = 0; i < 10; i++) {
-            System.out.print("───");
-            if (i < 9) System.out.print("┼");
-        }
-        System.out.println("┤");
-    }
-
-    private void printBottomBorder() {
-        System.out.print("  └");
-        for (int i = 0; i < 10; i++) {
-            System.out.print("───");
-            if (i < 9) System.out.print("┴");
-        }
-        System.out.println("┘");
-    }
-
-    private void printRow(Battlefield field, int row) {
-        System.out.printf("%2d│", row + 1);
-        for (int c = 0; c < 10; c++) {
-            System.out.print(" " + symbol(field.getCell(row, c)) + " ");
-            if (c < 9) System.out.print("│");
-        }
-        System.out.println("│");
-    }
-
-    private String symbol(Cell cell) {
-        switch (cell.getState()) {
-            case SHIP: return "■";   // виден для тестирования (по прототипу)
-            case MISS: return "·";
-            case HIT:  return "X";
-            default:   return " ";
-        }
-    }
-
-    // Метод для проверки расстановки
-    public void printDebugField(Battlefield field) {
-        printHeader();
-        printTopBorder();
-        for (int r = 0; r < Battlefield.SIZE; r++) {
-            System.out.printf("%2d│", r + 1);
-            for (int c = 0; c < 10; c++) {
-                String symbol = (field.getCell(r, c).getState() == CellState.SHIP) ? "■" : " ";
-                System.out.print(" " + symbol + " ");
-                if (c < 9) System.out.print("│");
-            }
-            System.out.println("│");
-            if (r < Battlefield.SIZE - 1) printMiddleBorder();
-        }
-        printBottomBorder();
+    private String enemySymbol(Cell cell) {
+        return switch (cell.getState()) {
+            case MISS -> "·";
+            case HIT -> "X";
+            default -> " ";
+        };
     }
 }

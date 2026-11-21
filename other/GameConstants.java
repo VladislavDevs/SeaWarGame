@@ -1,4 +1,4 @@
-package battleship.util;
+package SeaWarProject.other;
 
 public final class GameConstants {
 

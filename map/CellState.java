@@ -1,4 +1,4 @@
-package battleship.model;
+package SeaWarProject.map;
 
 /**
  * Состояния клетки игрового поля согласно заданию:

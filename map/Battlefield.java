@@ -1,4 +1,4 @@
-package battleship.model;
+package SeaWarProject.map;
 
 import java.util.ArrayList;
 import java.util.List;

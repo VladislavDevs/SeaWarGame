@@ -1,7 +1,7 @@
-package battleship.reader;
+package SeaWarProject.coordinateReader;
 
-import battleship.model.Coordinate;
-import battleship.util.GameConstants;
+import SeaWarProject.map.Coordinate;
+import SeaWarProject.other.GameConstants;
 
 import java.util.Locale;
 import java.util.Scanner;
