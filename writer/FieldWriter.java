@@ -3,18 +3,9 @@ package battleship.writer;
 import battleship.model.Battlefield;
 import battleship.model.Cell;
 import battleship.util.GameConstants;
+import battleship.model.CellState;;
 
 public class FieldWriter {
-
-    private final boolean revealShips;
-
-    public FieldWriter(boolean revealShips) {
-        this.revealShips = revealShips;
-    }
-
-    public FieldWriter() {
-        this(false);
-    }
 
     public void printField(Battlefield field) {
         printHeader();
@@ -73,10 +64,27 @@ public class FieldWriter {
 
     private String symbol(Cell cell) {
         switch (cell.getState()) {
+            case SHIP: return "■";   // виден для тестирования (по прототипу)
             case MISS: return "·";
             case HIT:  return "X";
-            case SHIP: return revealShips ? "■" : " ";
             default:   return " ";
         }
+    }
+
+    // Метод для проверки расстановки
+    public void printDebugField(Battlefield field) {
+        printHeader();
+        printTopBorder();
+        for (int r = 0; r < Battlefield.SIZE; r++) {
+            System.out.printf("%2d│", r + 1);
+            for (int c = 0; c < 10; c++) {
+                String symbol = (field.getCell(r, c).getState() == CellState.SHIP) ? "■" : " ";
+                System.out.print(" " + symbol + " ");
+                if (c < 9) System.out.print("│");
+            }
+            System.out.println("│");
+            if (r < Battlefield.SIZE - 1) printMiddleBorder();
+        }
+        printBottomBorder();
     }
 }

@@ -2,10 +2,14 @@ package battleship.model;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 public class Battlefield {
 
     public static final int SIZE = 10;
+
+    // Флот: 1x4, 2x3, 3x2, 4x1. Сортируем по убыванию размера для более эффективной расстановки
+    private static final int[] FLEET_SIZES = {4, 3, 3, 2, 2, 2, 1, 1, 1, 1};
 
     private final Cell[][] grid;
     private final List<Ship> ships;
@@ -51,7 +55,60 @@ public class Battlefield {
         return n;
     }
 
-    public static Battlefield createDefault() {
+        public static Battlefield createRandom() {
+        return createRandom(new Random().nextLong());
+    }
+
+    // Перегрузка с фиксированным seed для тестирования
+    public static Battlefield createRandom(long seed) {
+        Random random = new Random(seed);
+        System.out.println("[DEBUG] Генерация поля с seed: " + seed); // Для проверки
+        
+        for (int fleetAttempt = 0; fleetAttempt < 200; fleetAttempt++) {
+            Battlefield field = tryCreateRandom(random);
+            if (field != null) return field;
+        }
+        throw new IllegalStateException("Не удалось разместить флот случайным образом");
+    }
+
+    private static Battlefield tryCreateRandom(Random random) {
+        Battlefield field = new Battlefield();
+        for (int size : FLEET_SIZES) {
+            if (!placeShipRandomly(field, size, random)) {
+                return null;
+            }
+        }
+        return field;
+    }
+
+    private static boolean placeShipRandomly(Battlefield field, int size, Random random) {
+        for (int attempt = 0; attempt < 1000; attempt++) {
+            boolean horizontal = random.nextBoolean();
+            int row = random.nextInt(SIZE);
+            int col = random.nextInt(SIZE);
+            if (fits(field, row, col, size, horizontal)) {
+                field.placeShip(row, col, size, horizontal);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static boolean fits(Battlefield field, int row, int col, int size, boolean horizontal) {
+        int endRow = horizontal ? row : row + size - 1;
+        int endCol = horizontal ? col + size - 1 : col;
+        if (endRow >= SIZE || endCol >= SIZE) return false;
+
+        for (int r = row - 1; r <= endRow + 1; r++) {
+            for (int c = col - 1; c <= endCol + 1; c++) {
+                if (r < 0 || r >= SIZE || c < 0 || c >= SIZE) continue;
+                if (field.getCell(r, c).getState() == CellState.SHIP) return false;
+            }
+        }
+        return true;
+    }
+
+        public static Battlefield createDefault() {
         Battlefield field = new Battlefield();
 
         // 1 четырёхпалубный (A1-D1, гориз.)

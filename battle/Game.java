@@ -7,6 +7,8 @@ import battleship.util.GameConstants;
 import battleship.writer.ConsoleHelper;
 import battleship.writer.FieldWriter;
 
+import java.util.Scanner;
+
 public class Game {
 
     private final Battlefield field;
@@ -17,14 +19,29 @@ public class Game {
 
     private int shotCount;
 
-    public Game(String playerName) {
-        this.playerName   = playerName;
-        this.field        = Battlefield.createDefault();
-        this.cannon       = new Cannon(field);
-        this.coordinateReader    = new CoordinateReader();
-        //this.fieldWriter  = new FieldWriter(true);
-        this.fieldWriter  = new FieldWriter();
-        this.shotCount    = 0;
+    // Добавляем флаг debug
+    public Game(String playerName, boolean randomPlacement, boolean debugMode, Long seed) {
+        this.playerName = playerName;
+        
+        if (randomPlacement) {
+            this.field = (seed != null) ? Battlefield.createRandom(seed) : Battlefield.createRandom();
+        } else {
+            this.field = Battlefield.createDefault();
+        }
+
+        this.cannon      = new Cannon(field);      
+        this.coordinateReader   = new CoordinateReader();
+        this.fieldWriter = new FieldWriter();
+        this.shotCount   = 0;
+
+        // Механизм проверки результата расстановки
+        if (debugMode) {
+            System.out.println("=== РЕЖИМ ОТЛАДКИ ===");
+            System.out.println("Сгенерированное поле (корабли видны):");
+            fieldWriter.printDebugField(field); // Новый метод в FieldWriter
+            System.out.print("Нажмите Enter, чтобы начать игру...");
+            new Scanner(System.in).nextLine();
+        }
     }
 
     public void start() {
