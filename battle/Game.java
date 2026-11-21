@@ -124,7 +124,7 @@ public class Game {
     }
 
     private String formatCoord(Coordinate coord) {
-        String[] letters = {"А", "Б", "В", "Г", "Д", "Е", "Ж", "З", "И", "К"};
+        String[] letters = {"А", "B", "C", "D", "E", "F", "G", "H", "I", "J"};
         return letters[coord.getCol()] + (coord.getRow() + 1);
     }
 
